@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import logoblanc from "@assets/images/logo-blanc.png";
 // eslint-disable-next-line import/no-unresolved
 import { useNavigate, Link } from "react-router-dom";
-import "@assets/styles/Header.css";
+import "../assets/styles/Header.css";
 
 function Header() {
   const [token, setToken] = useState("");

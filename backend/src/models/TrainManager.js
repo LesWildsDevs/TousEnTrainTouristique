@@ -105,6 +105,29 @@ class TrainManager extends AbstractManager {
   }
 
   getJoinByAreaAndType(area, type) {
+    console.warn(`area${area}type :${type}`);
+    if (area === "*" && type === "*") {
+      return this.connection.query(
+        `SELECT * FROM tousentrain.train t
+        JOIN train_type type ON type.train_id = t.id ;`,
+        [area, type]
+      );
+    }
+    if (area === "*") {
+      return this.connection.query(
+        `SELECT * FROM tousentrain.train t
+        JOIN train_type type ON type.train_id = t.id where type_id = ?;`,
+        [area, type]
+      );
+    }
+    if (type === "*") {
+      return this.connection.query(
+        `SELECT * FROM tousentrain.train t
+        JOIN train_type type ON type.train_id = t.id where area_id = ?
+        GROUP BY train.id ;`,
+        [area, type]
+      );
+    }
     return this.connection.query(
       `SELECT * FROM tousentrain.train t
       JOIN train_type type ON type.train_id = t.id where area_id = ? and type_id = ?;`,
@@ -112,5 +135,4 @@ class TrainManager extends AbstractManager {
     );
   }
 }
-
 module.exports = TrainManager;

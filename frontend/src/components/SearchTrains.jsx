@@ -1,39 +1,73 @@
-import React, { useState } from "react";
-import "@assets/styles/SearchTrains.css";
+/* eslint-disable no-use-before-define */
+import axios from "axios";
+import { useState, useEffect } from "react";
+import TrainCard from "./TrainCard";
 
-const areas = [
-  {
-    id: 1,
-    name: "en Auvergne-Rhône-Alpes",
-  },
-  {
-    id: 2,
-    name: "en Provence-Alpes-Côte d'Azur",
-  },
-  {
-    id: 3,
-    name: "en Bretagne",
-  },
-];
+export default function FilterTrainTest() {
+  const [areas, setAreas] = useState([]);
+  const [areaSelected, setAreaSelected] = useState("*");
+  const [types, setTypes] = useState("");
+  const [typeSelected, setTypeSelected] = useState("*");
+  const [selections, setSelections] = useState("");
+  const [results, setResults] = useState([]);
 
-const types = [
-  {
-    id: 1,
-    name: "à la mer",
-  },
-  {
-    id: 2,
-    name: "à la montagne",
-  },
-  {
-    id: 3,
-    name: "à la campagne",
-  },
-];
+  useEffect(() => {
+    // Api Areas
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/areas`)
+      .then((response) => response.data)
+      .then((data) => setAreas(data));
+    // Api Types
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/types`)
+      .then((response) => response.data)
+      .then((data) => setTypes(data));
 
-function SearchTrain() {
-  const [area, setArea] = useState("");
-  const [type, setType] = useState("");
+    // Api Trains
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/trains/`)
+      .then((response) => {
+        setSelections(response.data);
+        setResults(response.data);
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  }, []);
+
+  function handleSearch() {
+    const myTrains = [];
+    selections.forEach((train) => {
+      const { tname } = train;
+      let name = "";
+      const trainTypes = Object.getOwnPropertyNames(train.types);
+      if (areaSelected === "*" && typeSelected === "*") {
+        myTrains.push(train);
+      } else if (areaSelected === train.areaName && typeSelected === "*") {
+        myTrains.push(train);
+      } else if (areaSelected === "*" && typeSelected !== "*") {
+        trainTypes.forEach((type) => {
+          if (type === typeSelected && name !== tname) {
+            name = tname;
+            myTrains.push(train);
+          }
+        });
+      } else {
+        trainTypes.forEach((type) => {
+          if (
+            type === typeSelected &&
+            name !== tname &&
+            areaSelected === train.areaName
+          ) {
+            name = tname;
+            myTrains.push(train);
+          }
+        });
+      }
+    });
+    setResults(myTrains);
+  }
+
   return (
     <div className="train_search_form">
       <form id="train_search">
@@ -42,15 +76,21 @@ function SearchTrain() {
           <br />
           <select
             className="area_select"
-            value={area}
+            value={areaSelected}
             id="area-select"
-            onChange={(e) => setArea(e.target.value)}
+            onChange={(e) => {
+              setAreaSelected(e.target.value);
+            }}
+            onClick={(e) => {
+              setAreaSelected(e.target.value);
+              handleSearch();
+            }}
           >
-            <option value="Partout">Partout</option>
+            <option value="*">Partout</option>
             {areas &&
-              areas.map((item) => (
-                <option value={item.name} key={item.id}>
-                  {item.name}
+              areas.map((area) => (
+                <option value={area.name} key={area.id}>
+                  {area.name}
                 </option>
               ))}
           </select>
@@ -61,30 +101,36 @@ function SearchTrain() {
           <br />
           <select
             className="type_select"
-            value={type}
+            value={typeSelected}
             id="type-select"
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => setTypeSelected(e.target.value)}
+            onClick={(e) => {
+              setTypeSelected(e.target.value);
+              handleSearch();
+            }}
           >
-            <option value="Pour tous les gouts">Pour tous les gouts</option>
+            <option value="*">Pour tous les gouts</option>
             {types &&
-              types.map((item) => (
-                <option value={item.name} key={item.id}>
-                  {item.name}
+              types.map((type) => (
+                <option value={type.id} key={type.id}>
+                  {type.title}
                 </option>
               ))}
           </select>
         </label>
       </form>
-      <button
-        className="train_search_button"
-        type="submit"
-        form="train-search"
-        value="Je trouve !"
-      >
-        Je trouve !
-      </button>
+
+      {results.length !== 0 &&
+        results.map((train) => (
+          <div>
+            <TrainCard
+              src={Object.values(train.path)[0]}
+              title={train.tname}
+              id={train.id}
+            />
+          </div>
+        ))}
+      {results.length === 0 && <p>Pas de train trouvé</p>}
     </div>
   );
 }
-
-export default SearchTrain;

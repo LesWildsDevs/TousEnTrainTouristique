@@ -111,7 +111,6 @@ const hashPasswordForReset = (req, res, next) => {
     res.status(401).send("Not Good User for modify password");
   }
 };
-
 module.exports = {
   hashPassword,
   verifyPassword,

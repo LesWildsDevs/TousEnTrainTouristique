@@ -15,7 +15,6 @@ export default function CreateTrainForm() {
   const [information, setInformation] = useState("");
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
-
   useEffect(() => {
     setToken(window.localStorage.getItem("token"));
 

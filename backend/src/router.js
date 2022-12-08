@@ -20,6 +20,8 @@ const {
   hashPasswordForReset,
 } = require("./controllers/auth");
 
+const validator = require("./controllers/validator");
+
 /* --- GET --- */
 router.get("/api/trains", trainControllers.getAllJoin); // Tous les trains (avec jointures)
 router.get("/api/trains/images/", imageTrainControllers.getAll); // Toutes les images de trains
@@ -46,18 +48,22 @@ router.get("/api/areas/:id", areaControllers.read); // Une région en particulie
 router.get("/api/types", typeControllers.getAll); // Tous les types de trains
 router.get("/api/types/:id", typeControllers.read); // Un type de train en particulier
 
-// /* --- POST --- */
-router.post("/api/reviews", reviewControllers.add); // Ajouter un commentaire
+/* --- POST --- */
 router.post("/api/contacts", contactControllers.add); // Envoyer un message
 router.post("/api/mail", userControllers.getUserByEmail, modifyPassword); // modifier son mot de passe
-router.post("/api/users", hashPassword, userControllers.postUser); // Création de compte
+router.post(
+  "/api/users",
+  validator.validateUser,
+  hashPassword,
+  userControllers.postUser
+); // Création de compte
 router.post(
   "/api/login",
   userControllers.getUserByEmailWithPasswordAndPassToNext,
   verifyPassword
 ); // connexion
 
-// /* --- PUT --- */
+/* --- PUT --- */
 router.put("/api/contacts/:id", contactControllers.edit); // Éditer un message
 router.put(
   "/api/mail/:token",
@@ -72,20 +78,25 @@ router.put(
 router.use(verifyToken);
 
 /* --- GET --- */
-router.get("/api/users/:id", userControllers.read); // Un utilisateur en particulier
+router.get("/api/users/:id", userControllers.getUserToUpdate); // Un utilisateur en particulier
 router.get("/api/imageavatars/:id", imageAvatarControllers.read); // avatar par user_id
 router.get("/api/favorites", favoriteControllers.getAll); // Tous les favoris
 router.get("/api/users/:id/favorites", favoriteControllers.readByUser); // affichage des favoris sur la page profil
 router.get("/api/trains/:train/:id/favorite", favoriteControllers.readByTrain); // Affichage du favori par train
 
 /* --- POST --- */
+router.post("/api/reviews", validator.validateReview, reviewControllers.add); // Ajouter un commentaire
 router.post("/api/favorites", favoriteControllers.add); // Ajouter un favoris
 router.post("/api/imageavatars", imageAvatarControllers.add); // Ajouter un avatar
 router.post("/api/trains/images", imageTrainControllers.add); // Ajouter une image d'un train
-router.post("/api/trains", trainControllers.add); // Ajouter un train
+router.post("/api/trains", validator.validateTrain, trainControllers.add); // Ajouter un train
 
 /* --- PUT --- */
-router.put("/api/users/:id", userControllers.edit); // Un utilisateur en particulier
+router.put(
+  "/api/users/:id",
+  validator.validateUpdateUser,
+  userControllers.edit
+); // Un utilisateur en particulier
 
 /* --- DELETE --- */
 router.delete("/api/favorites/:id", favoriteControllers.destroy); // Supprimer un favoris
@@ -118,11 +129,15 @@ router.post("/api/types", typeControllers.add); // Créer un type de train
 router.post("/api/areas", areaControllers.add); // Créer une région
 
 /* --- PUT --- */
-router.put("/api/reviews/:id", reviewControllers.putReview); // Éditer un commentaire
+router.put(
+  "/api/reviews/:id",
+  validator.validateReview,
+  reviewControllers.putReview
+); // Éditer un commentaire
 router.put("/api/types/:id", typeControllers.edit); // Modifier un type de train
 router.put("/api/areas/:id", areaControllers.edit); // Modifier une région
 router.put("/api/trains/images/:id", imageTrainControllers.edit); // Modifier une image
-router.put("/api/trains/:id", trainControllers.update); // Modifier un train
+router.put("/api/trains/:id", validator.validateTrain, trainControllers.update); // Modifier un train
 
 /* --- DELETE --- */
 router.delete("/api/reviews/:id", reviewControllers.destroy); // Supprimer un commentaire

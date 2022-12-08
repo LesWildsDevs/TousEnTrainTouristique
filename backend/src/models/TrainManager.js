@@ -59,7 +59,7 @@ class TrainManager extends AbstractManager {
       JOIN image_train AS i ON i.train_id=t.id       
       JOIN area AS a ON a.id=t.area_id       
       JOIN train_type  ON t.id = train_type.train_id       
-      LEFT JOIN type ON type.id = train_type.type_id 
+      JOIN type ON type.id = train_type.type_id 
       where t.published = 1      
       group by t.id;`
     );

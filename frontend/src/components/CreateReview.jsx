@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Rating } from "react-simple-star-rating";
 import { getDate } from "../services/DateManager";
 import "../assets/styles/CreateReview.css";
+import "../assets/styles/loader.css";
 
 function CreateReview({ id }) {
   const [posted, setPosted] = useState(false);
@@ -13,6 +15,8 @@ function CreateReview({ id }) {
   const [rating, setRating] = useState(0); // valeur initiale de notation
   const [readOnly, setReadOnly] = useState(false); // pour bloquer les étoiles
   const userId = window.localStorage.getItem("id");
+
+  const navigate = useNavigate();
 
   const handleRating = (rate) => {
     setRating(rate);
@@ -30,11 +34,10 @@ function CreateReview({ id }) {
         updated_on: null, // null par default car il s'agit d'une création de review
         published: 0, // 0 par default car c'est l'administrateur qui valide la publication du review
       })
-      .then((response) => {
-        console.error(response);
-        console.error(response.data);
+      .then(() => {
+        setPosted(true); // affichage du loader
+        setTimeout(() => navigate("/"), 4000); // redirection vers la page d'accueil
       });
-    setPosted(true);
   };
 
   if (posted === false) {
@@ -96,6 +99,12 @@ function CreateReview({ id }) {
         <div className="create_review_send">
           Nous avons bien reçu votre commentaire. Il sera validé dans quelques
           heures.
+        </div>
+        <div className="lds-ellipsis">
+          <div />
+          <div />
+          <div />
+          <div />
         </div>
       </div>
     );

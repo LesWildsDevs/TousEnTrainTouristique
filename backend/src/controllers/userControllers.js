@@ -17,7 +17,23 @@ const getAll = (req, res) => {
 
 const read = (req, res) => {
   models.user
-    .getAllUserFromId(req.params.id)
+    .getUserFromId(req.params.id)
+    .then(([rows]) => {
+      if (rows[0] == null) {
+        res.sendStatus(404);
+      } else {
+        res.send(rows[0]);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
+const getUserToUpdate = (req, res) => {
+  models.user
+    .getUserFromIdToUpdate(req.params.id)
     .then(([rows]) => {
       if (rows[0] == null) {
         res.sendStatus(404);
@@ -150,6 +166,7 @@ const deleteUser = (req, res) => {
 module.exports = {
   getAll,
   read,
+  getUserToUpdate,
   edit,
   postUser,
   getUserByEmailWithPasswordAndPassToNext,

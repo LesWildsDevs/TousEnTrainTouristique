@@ -22,6 +22,8 @@ function Train() {
   const token = window.localStorage.getItem("token");
 
   const [isFavorite, setIsFavorite] = useState(false);
+
+  // chargement de l'état de favoris ou non du train pour l'utilisateur
   const getFavorite = () => {
     axios
       .get(
@@ -35,6 +37,8 @@ function Train() {
       .catch((err) => console.warn(err));
   };
 
+  // le useEffect se déclenche uniquement s'il y a un token
+  // car seul les utilisateurs peuvent avoir des favoris
   token
     ? useEffect(() => {
         getFavorite();
@@ -51,6 +55,7 @@ function Train() {
     isFavorite ? "train_favoris_image invisible" : "train_favoris_image"
   ); // état gérant l'affichage de l'image non favoris
 
+  // chargement des données du train
   const getTrain = () => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/trains/${params.id}/images`)
@@ -58,6 +63,7 @@ function Train() {
       .then((data) => setTrain(data));
   };
 
+  // chargement des activitées liées à ce train
   const getActivities = () => {
     axios
       .get(
@@ -67,6 +73,7 @@ function Train() {
       .then((data) => setActivities(data));
   };
 
+  // chargement des commentaires liés à ce train
   const getReviews = () => {
     axios
       .get(
@@ -88,53 +95,65 @@ function Train() {
     getReviews();
   }, []);
 
+  useEffect(() => {
+    document.title = `Tous en Trains Touristiques | ${train.tname}`;
+  }, [train]);
+
+  // ajout en favoris de ce train
   const addFavorite = () => {
-    setFavoriteClass("train_favoris_image");
-    setNoFavoriteClass("train_favoris_image invisible");
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/favorites`, {
-      user_id: userId,
-      train_id: params.id,
-      added_on: getDate(),
-    });
-    setIsFavorite(true);
+    axios
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/favorites`, {
+        user_id: userId,
+        train_id: params.id,
+        added_on: getDate(),
+      })
+      .then(() => {
+        setFavoriteClass("train_favoris_image");
+        setNoFavoriteClass("train_favoris_image invisible");
+        setIsFavorite(true);
+      });
   };
 
+  // suppression de ce train des favoris
   const deleteFavorite = () => {
-    setFavoriteClass("train_favoris_image invisible");
-    setNoFavoriteClass("train_favoris_image");
-    axios.delete(
-      `${import.meta.env.VITE_BACKEND_URL}/api/favorites/${params.id}`
-    );
-    setIsFavorite(false);
+    axios
+      .delete(`${import.meta.env.VITE_BACKEND_URL}/api/favorites/${params.id}`)
+      .then(() => {
+        setFavoriteClass("train_favoris_image invisible");
+        setNoFavoriteClass("train_favoris_image");
+        setIsFavorite(false);
+      });
   };
 
   return (
     <div className="train_main_div">
       <Header />
-      {token ? (
-        <div className="train_favoris_box">
-          {isFavorite && (
-            <img
-              className={favoriteClass}
-              src={favoris}
-              onClick={() => deleteFavorite()}
-              alt="favoris"
-            />
-          )}
-          {!isFavorite && (
-            <img
-              className={noFavoriteClass}
-              src={favorisVide}
-              onClick={() => addFavorite()}
-              alt="non favoris"
-            />
-          )}
+      <div className="train_name_favoris">
+        <div className="train_title_favoris_box">
+          <h2 className="train_title">{train.tname}</h2>
         </div>
-      ) : (
-        ""
-      )}
-      <div className="train_title_favoris_box">
-        <h2 className="train_title">{train.tname}</h2>
+        {token ? (
+          <div className="train_favoris_box">
+            {isFavorite && (
+              <img
+                className={favoriteClass}
+                src={favoris}
+                onClick={() => deleteFavorite()}
+                alt="favoris"
+              />
+            )}
+            {!isFavorite && (
+              <img
+                className={noFavoriteClass}
+                src={favorisVide}
+                onClick={() => addFavorite()}
+                alt="non favoris"
+              />
+            )}
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <div className="train_image_div">
         <TrainImages images={train.images} />

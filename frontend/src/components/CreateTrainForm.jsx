@@ -6,6 +6,7 @@ import { getDate } from "../services/DateManager";
 import AddImageTrain from "../services/AddImageTrain";
 import "../assets/styles/CreateUserForm.css";
 import "../assets/styles/CreateTrainForm.css";
+import "../assets/styles/loader.css";
 
 export default function CreateTrainForm() {
   const [name, setName] = useState("");
@@ -16,7 +17,7 @@ export default function CreateTrainForm() {
   const [description, setDescription] = useState("");
   const [information, setInformation] = useState("");
   const userId = window.localStorage.getItem("id");
-  const [posted, setPosted] = useState(false);
+  const [postedTrain, setPostedTrain] = useState(false);
   const [sendImage, setSendImage] = useState({
     title: "",
     path: "",
@@ -60,28 +61,34 @@ export default function CreateTrainForm() {
   const postTrain = () => {
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/trains/`, {
-        name,
-        train_user_id: userId,
-        area_id: selectedArea,
-        created_on: getDate(),
-        updated_on: null,
-        types: selectedTypes,
-        image: sendImage,
-        published: 0,
-        description,
-        description_info: information,
+        name, // valeur du state mise à jour avec le formulaire
+        train_user_id: userId, // récupéré avec localstorage
+        area_id: selectedArea, // region sélectionnée
+        created_on: getDate(), // formatage de la date
+        updated_on: null, // null car il s'agit d'une création
+        types: selectedTypes, // type(s) sélectionné(s)
+        image: sendImage, // objet contenant les données de l'image
+        published: 0, // 0 par default car c'est l'administrateur qui valide la publication du train
+        description, // valeur du state mise à jour avec le formulaire
+        description_info: information, // valeur du state mise à jour avec le formulaire
       })
-      .then((res) => console.warn(res));
-    setPosted(true);
-    setTimeout(() => navigate("/"), 3000);
+      .then(() => {
+        setPostedTrain(true); // affichage du loader
+        setTimeout(() => navigate("/profil"), 4000); // redirection vers la page d'accueil
+      });
   };
 
-  if (posted === false) {
+  if (postedTrain === false) {
     return (
       <div className="contact1">
         <div className="Contact">
           <h1>Ajouter un train</h1>
-          <form onSubmit={(e) => postTrain(e)}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              postTrain();
+            }}
+          >
             <label className="create_train_form_label" htmlFor="train_name">
               Indiquez ici le nom du train
             </label>
@@ -187,12 +194,18 @@ export default function CreateTrainForm() {
     );
   }
   // message affiché à l'utilisateur une fois que le formulaire a été envoyé
-  if (posted === true) {
+  if (postedTrain === true) {
     return (
       <div>
         <div className="create_review_send">
-          Merci pour votre proposition de création de train. Elle sera validé
+          Merci pour votre proposition de création de train. Elle sera validée
           d'ici quelques jours.
+        </div>
+        <div className="lds-ellipsis">
+          <div />
+          <div />
+          <div />
+          <div />
         </div>
       </div>
     );

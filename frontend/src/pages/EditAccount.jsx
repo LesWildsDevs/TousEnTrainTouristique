@@ -1,15 +1,33 @@
-import Header from "@components/Header";
 import axios from "axios";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDate } from "../services/DateManager";
+import Header from "../components/Header";
 
 function EditAccount() {
-  const [name, setName] = useState(window.localStorage.getItem("name"));
-  const [mail, setMail] = useState(window.localStorage.getItem("mail"));
+  const [name, setName] = useState("");
+  const [mail, setMail] = useState("");
+
+  const id = window.localStorage.getItem("id");
+
+  // chargement du mail et du nom de l'utilisateur
+  const getUser = () => {
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/users/${id}`)
+      .then((response) => response.data)
+      .then((data) => {
+        setName(data.name);
+        setMail(data.mail);
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const navigate = useNavigate();
 
+  // récupération de l'id de l'utilisateur
   const userId = window.localStorage.getItem("id");
 
   const logout = () => {
@@ -26,7 +44,7 @@ function EditAccount() {
     if (window.confirm("Voulez-vous vraiment supprimer votre compte?")) {
       axios
         .delete(`${import.meta.env.VITE_BACKEND_URL}/api/users/${userId}`)
-        .then(logout());
+        .then(() => logout());
     }
   };
 
@@ -41,7 +59,7 @@ function EditAccount() {
       })
       .then(window.localStorage.setItem("name", name))
       .then(window.localStorage.setItem("mail", mail))
-      .then(navigate("/profil"));
+      .then(() => navigate("/profil"));
   };
   return (
     <div>
@@ -65,7 +83,7 @@ function EditAccount() {
           />
           <div className="buttonPart">
             <input
-              type="onsubmit"
+              type="button"
               defaultValue="Modifier"
               className="user_information"
               onClick={(e) => handleClick(e)}

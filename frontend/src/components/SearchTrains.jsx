@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import TrainCard from "./TrainCard";
 import "../assets/styles/SearchTrains.css";
+import "../assets/styles/loader.css";
 
 export default function FilterTrainTest() {
   const [areas, setAreas] = useState([]);
@@ -141,7 +142,17 @@ export default function FilterTrainTest() {
           ))}
       </div>
 
-      {results.length === 0 && <p>Pas de train trouvé</p>}
+      {results.length === 0 && (
+        <div>
+          <p className="loader-title">Chargement en cours</p>
+          <div className="lds-ellipsis">
+            <div />
+            <div />
+            <div />
+            <div />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

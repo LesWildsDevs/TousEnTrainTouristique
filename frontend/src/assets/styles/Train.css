@@ -25,6 +25,8 @@
 .train_title {
   font-weight: bold;
   font-size: 6vw;
+  width: 70vw;
+  margin-left: 5vw;
 }
 
 /* div contenant les images du train */
@@ -66,19 +68,29 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  padding-left: 4%;
-  padding-right: 4%;
+  width: 20vw;
+  height: 12vw;
 }
 
 .train_favoris_image {
-  width: 5%;
+  width: 40%;
 }
 
 .invisible {
   display: none;
 }
 
+.train_name_favoris {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5%;
+}
+
 @media screen and (min-width: 768px) {
+  .train_name_favoris {
+    margin-left: 10%;
+  }
+
   .train_image_div {
     display: flex;
     flex-direction: row;
@@ -102,6 +114,8 @@
   }
 
   .train_title {
+    font-weight: bold;
+    font-family: "Avenir-Book";
     font-size: 5vw;
   }
 

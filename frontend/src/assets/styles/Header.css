@@ -71,11 +71,10 @@
     padding-bottom: 0.5%;
   }
   .header_title {
-    font-size: 2rem;
+    font-size: 4vw;
     width: 100%;
     text-align: center;
     padding-left: 0;
-    margin-left: -132px;
   }
   .header_logo_img {
     padding: 2%;
@@ -84,7 +83,7 @@
     top: 8px;
   }
   .header_links {
-    font-size: 1.3rem;
+    font-size: 2vw;
     padding: 1%;
   }
   .header_links_title_container {

@@ -14,59 +14,62 @@ const administrator = () => {
   const [messageBool, setMessageBool] = useState(false);
 
   return (
-    <div className="review_list_main_div">
+    <div className="admin_main_div">
       <Header />
-      <h2 className="review_list_title">
-        Commentaires{" "}
-        <button
-          type="button"
-          className="button-form-create"
-          onClick={() => setReviewBool(!reviewBool)}
-        >
-          {reviewBool ? "Masquer" : "Afficher"}
-        </button>
-      </h2>
-      {reviewBool ? <ReviewsList /> : ""}
-      <h2 className="review_list_title">
-        Images{" "}
-        <button
-          type="button"
-          className="button-form-create"
-          onClick={() => setImageBool(!imageBool)}
-        >
-          {imageBool ? "Masquer" : "Afficher"}
-        </button>
-      </h2>
-      {imageBool ? (
-        <div>
-          <ImageManager />
-          <AddImage />
+      <div className="admin_menu">
+        <div className="admin_menu_details">
+          <h2 className="administrator_title">Commentaires </h2>
+          <button
+            type="button"
+            className="button-form-admin"
+            onClick={() => setReviewBool(!reviewBool)}
+          >
+            {reviewBool ? "Masquer" : "Afficher"}
+          </button>
         </div>
-      ) : (
-        ""
-      )}
-      <h2 className="review_list_title">
-        Trains{" "}
-        <button
-          type="button"
-          className="button-form-create"
-          onClick={() => setTrainBool(!trainBool)}
-        >
-          {trainBool ? "Masquer" : "Afficher"}
-        </button>
-      </h2>
-      {trainBool ? <TrainList /> : ""}
-      <h2 className="review_list_title">
-        Messages{" "}
-        <button
-          type="button"
-          className="button-form-create"
-          onClick={() => setMessageBool(!messageBool)}
-        >
-          {messageBool ? "Masquer" : "Afficher"}
-        </button>
-      </h2>
-      {messageBool ? <ContactList /> : ""}
+        {reviewBool ? <ReviewsList /> : ""}
+        <div className="admin_menu_details">
+          <h2 className="administrator_title">Images </h2>
+          <button
+            type="button"
+            className="button-form-admin"
+            onClick={() => setImageBool(!imageBool)}
+          >
+            {imageBool ? "Masquer" : "Afficher"}
+          </button>
+        </div>
+        {imageBool ? (
+          <div>
+            <ImageManager />
+            <AddImage />
+          </div>
+        ) : (
+          ""
+        )}
+        <div className="admin_menu_details">
+          <h2 className="administrator_title">Trains </h2>
+          <button
+            type="button"
+            className="button-form-admin"
+            onClick={() => setTrainBool(!trainBool)}
+          >
+            {trainBool ? "Masquer" : "Afficher"}
+          </button>
+        </div>
+        {trainBool ? <TrainList /> : ""}
+        <div className="admin_menu_details">
+          <h2 className="administrator_title">Messages </h2>
+          <button
+            type="button"
+            className="button-form-admin"
+            onClick={() => setMessageBool(!messageBool)}
+          >
+            {messageBool ? "Masquer" : "Afficher"}
+          </button>
+        </div>
+
+        {messageBool ? <ContactList /> : ""}
+      </div>
     </div>
   );
 };

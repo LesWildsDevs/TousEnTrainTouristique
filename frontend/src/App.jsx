@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import ModifyAvatar from "@pages/ModifyAvatar";
-// eslint-disable-next-line import/no-unresolved
-import NotFoundPage from "@components/NotFoundPage";
-import EditAccount from "@pages/EditAccount";
+import ModifyAvatar from "./pages/ModifyAvatar";
+import NotFoundPage from "./components/NotFoundPage";
+import EditAccount from "./pages/EditAccount";
 import ModifyPasswordPageBis from "./pages/ModifyPasswordPageBis";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";

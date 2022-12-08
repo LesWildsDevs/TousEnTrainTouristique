@@ -1,12 +1,14 @@
-// eslint-disable-next-line import/no-unresolved
-import Header from "@components/Header";
+import { useEffect } from "react";
+import Header from "../components/Header";
 import SearchTrain from "../components/SearchTrains";
-// eslint-disable-next-line import/no-unresolved
 
 export default function Home() {
+  useEffect(() => {
+    document.title = "Tous en Trains Touristiques | Accueil";
+  }, []);
   return (
     <div>
-      <Header />
+      <Header role="banner" />
       <SearchTrain />
     </div>
   );

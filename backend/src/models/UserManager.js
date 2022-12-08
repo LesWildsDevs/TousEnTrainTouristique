@@ -11,9 +11,16 @@ class UserManager extends AbstractManager {
     );
   }
 
-  getAllUserFromId(id) {
+  getUserFromId(id) {
     return this.connection.query(
       `SELECT name, mail, user_right, created_on, updated_on FROM ${this.table} WHERE id = ?`,
+      [id]
+    );
+  }
+
+  getUserFromIdToUpdate(id) {
+    return this.connection.query(
+      `SELECT name, mail FROM ${this.table} WHERE id = ?`,
       [id]
     );
   }
